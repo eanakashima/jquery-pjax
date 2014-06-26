@@ -209,6 +209,29 @@ if ($.support.pjax) {
     frame.$("a[href='/dinosaurs.html']").click()
   })
 
+  asyncTest("ignores event if window.onbeforeunload is set", function() {
+    var frame = this.frame
+    var eventIgnored = true
+
+    frame.onbeforeunload = function() { return "Your changes will be lost" }
+
+    frame.$("#main").pjax("a").on("pjax:click", function() {
+      eventIgnored = false
+    })
+
+    frame.$("a[href='/dinosaurs.html']").on("click", function(event) {
+      setTimeout(function() {
+        ok(eventIgnored, "Event ignored when window.onbeforeunload is set")
+
+        // Clean up before the next test
+        frame.onbeforeunload = null
+
+        start()
+      }, 10)
+    })
+
+    frame.$("a[href='/dinosaurs.html']").click()
+  })
 
   asyncTest("scrolls to anchor after load", function() {
     var frame = this.frame

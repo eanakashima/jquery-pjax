@@ -86,6 +86,11 @@ function handleClick(event, container, options) {
   if (event.isDefaultPrevented())
     return
 
+  // Ignore if window.onbeforeunload is set, since we may not be able to safely
+  // navigate away from the current page.
+  if (window.onbeforeunload)
+    return
+
   var defaults = {
     url: link.href,
     container: $(link).attr('data-pjax'),
